@@ -1,0 +1,59 @@
+pip install "fastapi[standard]" // instalar las librerias necesarias para correr fastapi
+fastapi dev main.py //correr servidor
+http://127.0.0.1:8000/docs //correr swagger
+
+
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+class Producto(BaseModel):
+    nombre: str
+    cantidad: int
+    precio: int
+
+
+app = FastAPI()
+
+productos= [
+        {"nombre": "Manzanas", "cantidad": 10, "precio": 5000},
+        {"nombre": "Peras", "cantidad": 20, "precio": 10000},
+        {"nombre": "Limones", "cantidad": 30, "precio": 10000}
+    ]
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+@app.get("/usuario")
+async def obternerUsuario():
+    return {"usuario": "Administrador", "clave":"12345"}
+
+@app.get("/productos")
+async def obtenerProductos():
+    return productos
+
+@app.get("/productoid")
+async def obtenerProductoPorId(id):
+    posicion = int(id)
+    return {"producto", productos[posicion]["nombre"]}
+
+
+@app.post("/producto")
+async def guardarProducto(producto: Producto):
+    productos.append(producto)
+    return productos
+
+@app.put("/producto")
+async def guardarProducto(id, producto: Producto):
+    posicion = int(id)
+    productos[posicion]= producto
+    return productos
+
+
+@app.delete("/producto")
+async def guardarProducto(id, producto: Producto):
+    posicion = int(id)
+    productos.pop(posicion)
+    return productos
